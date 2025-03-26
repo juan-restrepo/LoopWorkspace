@@ -288,6 +288,7 @@ jobs:
           override_sens \
           now_line \
           lnl_icon \
+          g7_scan \
           watch_title \
           2hlollipop \
           meal_days \
