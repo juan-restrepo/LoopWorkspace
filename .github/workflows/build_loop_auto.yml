@@ -1,4 +1,4 @@
-name: 4. Build Loop Auto 
+name: 4. Build Loop Auto
 run-name: Build Loop Auto (${{ github.ref_name }})
 on:
   workflow_dispatch:
@@ -31,14 +31,14 @@ jobs:
         id: workflow-permission
         run: |
           # Validate Access Token
-          
+
           # Ensure that gh exit codes are handled when output is piped.
           set -o pipefail
-          
+
           # Define patterns to validate the access token (GH_PAT) and distinguish between classic and fine-grained tokens.
           GH_PAT_CLASSIC_PATTERN='^ghp_[a-zA-Z0-9]{36}$'
           GH_PAT_FINE_GRAINED_PATTERN='^github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59}$'
-          
+
           # Validate Access Token (GH_PAT)
           if [ -z "$GH_PAT" ]; then
             failed=true
@@ -53,7 +53,7 @@ jobs:
               unknown_format=true
               echo "The GH_PAT secret does not have a known token format."
             fi
-            
+
             # Attempt to capture the x-oauth-scopes scopes of the token.
             if ! scopes=$(curl -sS -f -I -H "Authorization: token $GH_PAT" https://api.github.com | { grep -i '^x-oauth-scopes:' || true; } | cut -d ' ' -f2- | tr -d '\r'); then
               failed=true
@@ -80,7 +80,7 @@ jobs:
               echo "has_permission=true" >> $GITHUB_OUTPUT
             fi
           fi
-          
+
           # Exit unsuccessfully if secret validation failed.
           if [ $failed ]; then
             exit 2
@@ -224,16 +224,37 @@ jobs:
           #curl https://github.com/loopnlearn/Loop/commit/d206432b024279ef710df462b20bd464cd9682d4.patch | git apply --directory=Loop -v --whitespace=fix
 
           # Submodule LoopKit patches:
-          # General template for customizing submodule LoopKit 
+          # General template for customizing submodule LoopKit
           # Copy url from a GitHub commit or pull request and insert below, and remove the "#" sign from the beginning of the line to activate:
           #curl url_to_github_commit.patch | git apply --directory=LoopKit -v --whitespace=fix
 
           # Submodule xxxxx patches:
 
-          # Add patches for customization of additional submodules by following the templates above, 
+          # Add patches for customization of additional submodules by following the templates above,
           # and make sure to specify the submodule by setting "--directory=(submodule_name)".
           # Several patches may be added per submodule.
           # Adding comments (#) may be useful to easily tell the individual patches apart.
+
+          # The lines below add the customizations listed using the CustomizationSelect script
+          # The "\" is a continuation character
+          #   the line following a "\" should not be blank
+          /bin/bash -c "$(curl -fsSL \
+          https://raw.githubusercontent.com/loopandlearn/lnl-scripts/main/CustomizationSelect.sh)" \
+          future_carbs_4h \
+          low_carb_limit \
+          override_sens \
+          now_line \
+          lnl_icon \
+          watch_title \
+          2hlollipop \
+          meal_days \
+          profiles \
+          basal_lock \
+          negative_insulin \
+          remote_window
+
+          # the final customization listed above CANNOT have a continuation character
+          # more customizations can be pasted after this line
 
       # Patch Fastlane Match to not print tables
       - name: Patch Match Tables
